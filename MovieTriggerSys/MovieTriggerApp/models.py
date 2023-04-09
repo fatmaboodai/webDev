@@ -23,8 +23,8 @@ class Movie(models.Model):
     description = models.TextField()
     age_rating = models.CharField(max_length  = 4, choices = AGE_RATINGS, default = RATED_G)
 
-    genre = models.ForeignKey('Genre', on_delete=models.PROTECT)
-    trigger = models.ForeignKey('Trigger', on_delete=models.PROTECT)
+    genre = models.ForeignKey('Genre', on_delete=models.PROTECT,null=True)
+    trigger = models.ForeignKey('Trigger', on_delete=models.PROTECT,null=True)
 
 class Trigger(models.Model):
     name = models.CharField(max_length = 255)
@@ -49,14 +49,12 @@ class Genre(models.Model):
         (MYSTERY, 'Mystery'),
         (ROMANCE, 'Romance')
     ]
-
-    name = models.CharField(max_length = 255)
     genre = models.CharField(max_length = 255, choices = GENRE_CHOICES, default = DRAMA)
 
 class Review(models.Model):
     RID = models.CharField(max_length = 255, primary_key=True)
-    Viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT)
-    movie = models.ForeignKey('Movie', on_delete=models.PROTECT)
+    Viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT,null=True)
+    movie = models.ForeignKey('Movie', on_delete=models.PROTECT,null=True)
 
 class Viewer(models.Model):
     VID = models.CharField(max_length = 255, primary_key=True)
@@ -67,6 +65,5 @@ class List(models.Model):
     LID = models.CharField(max_length = 255, primary_key=True)
     name = models.CharField(max_length = 255)
     description = models.TextField()
-
-    movie = models.ForeignKey('Movie', on_delete=models.PROTECT)
-    viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT)
+    movie = models.ForeignKey('Movie', on_delete=models.PROTECT,null=True)
+    viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT,null=True)
