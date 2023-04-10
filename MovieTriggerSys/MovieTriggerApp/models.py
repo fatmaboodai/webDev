@@ -1,4 +1,6 @@
 from django.db import models
+from django.forms import ValidationError
+from django.core.validators import MinValueValidator,MaxValueValidator
 
 
 # Create your models here.
@@ -22,9 +24,11 @@ class Movie(models.Model):
     title = models.CharField(max_length = 255)
     description = models.TextField()
     age_rating = models.CharField(max_length  = 4, choices = AGE_RATINGS, default = RATED_G)
-
     genre = models.ForeignKey('Genre', on_delete=models.PROTECT,null=True)
     trigger = models.ForeignKey('Trigger', on_delete=models.PROTECT,null=True)
+    review = models.ForeignKey('Review', on_delete=models.PROTECT,null=True)
+
+
 
 class Trigger(models.Model):
     name = models.CharField(max_length = 255)
@@ -38,7 +42,6 @@ class Genre(models.Model):
     HORROR = 'H'
     MYSTERY = 'M'
     ROMANCE = 'R'
-
 
     GENRE_CHOICES = [
         (ACTION, 'Action'),
@@ -54,7 +57,10 @@ class Genre(models.Model):
 class Review(models.Model):
     RID = models.CharField(max_length = 255, primary_key=True)
     Viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT,null=True)
-    movie = models.ForeignKey('Movie', on_delete=models.PROTECT,null=True)
+    description = models.TextField(null=True)
+    rating = models.IntegerField(validators = (MinValueValidator(1),MaxValueValidator(5)),null=True)
+
+
 
 class Viewer(models.Model):
     VID = models.CharField(max_length = 255, primary_key=True)
