@@ -5,8 +5,51 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>test</title>
+    <style>
+        ul{
+            list-style: none;
+            display: flex;
+            justify-content: space-around;
+            
+            
+        }
+        .singleMovie{
+            display: block;
+            justify-content: space-around;
+           
+            border-style: solid;
+          
+
+        }
+        .header{
+            display: flex;
+            justify-content: space-around;
+        
+         
+        }
+        li{
+            text-align: center;
+
+        }
+        .dec{
+            width: 200px;
+        }
+        .container{
+    width: 600px;
+    height: 200vh;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+
+
+        }
+        /* .title{
+   
+        } */
+    </style>
 </head>
-<body>
+<body class="container">
+    
     <h1> Hello {{name}}</h1>
     <!-- {% if name%}
 
@@ -15,14 +58,50 @@
         hello {{queryset.title}}
     </h1>
     {% endif%}  -->
+    <div class="header">
+        <h2>Movie Title</h2>
+ 
+    </div>
+    </div>
      {% for i in queryset%}
-    <li>
-    {{i.title}}
-    </li>
-    {% endfor %}
-
+     <div class="title">
+        <ul>
+            <li>
+                {{i.title}}
+                </li>
+        </ul>
+     </div>
+     {% endfor %}
+     <div class="header">
+     <h2>Movie description</h2> 
+     </div>
+     {% for i in queryset%}
+   
+     <div class="desc">
+        <ul>
+            <li class="dec">
+                {{i.description}}
+                </li>
+        </ul>
     
-
-
+          
+     </div>
+     {% endfor %}
+     <div class="header">
+     <h2>Movie age rating</h2> 
+     </div>
+     {% for i in queryset%}
+     
+     <div class="age">
+        <ul>
+    
+          
+        <li>
+            {{i.age_rating}}
+            </li>
+        </ul>
+     </div>
+     {% endfor %}
+   
 </body>
 </html>
