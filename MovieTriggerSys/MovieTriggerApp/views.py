@@ -10,4 +10,4 @@ from django.db import transaction
 def ViewPage(request):
     queryset = Movie.objects.all()
     list(queryset)
-    return render(request,'MovieTriggerApp/index.html',{'name':'This is our Movie list : ','queryset':queryset})
+    return render(request,'MovieTriggerApp/index.html',{'name':'This is our Movie list  ','queryset':queryset})
