@@ -12,11 +12,20 @@ from django.utils.html import format_html
 #  this is the inline children code its not working
 # # we can write a trigger while creating a movie 
 # # add a children inline 
-# class TriggerInline(admin.StackedInline):
-#     # overriding thew model i want to make it inline
-#     model = models.Trigger
-#     extra = 0
+class TriggerAdminInline(admin.StackedInline):
+    # overriding thew model i want to make it inline
+    model = models.Movie
+    extra = 0
 
+#this is the inline children code its not working
+# we can create a movie while creating a list
+# add a children inline 
+class MovieAdminInline(admin.StackedInline):
+    # overriding thew model i want to make it inline
+    model = models.List
+    extra = 0
+    # what is the name of the fk 
+    # fk_name = model.trigger
 
 # MOVIE MODEL
 @admin.register(models.Movie)
@@ -28,7 +37,7 @@ class MovieAdmin(admin.ModelAdmin):
     
     # display fields 
     fields = ['trigger']
-    list_display=['MID','title','description','age_rating','TopMovies', 'trigger','trigger_name']
+    list_display=['MID','title','description','age_rating','TopMovies','trigger_name', 'age_rating_status']
     list_editable=['age_rating']
     list_per_page=20
     list_filter=['age_rating']
@@ -37,13 +46,9 @@ class MovieAdmin(admin.ModelAdmin):
 
     # to make the genre and the trigger searcheable in the form
     autocomplete_fields=['trigger','genre']
-
-
-# this is the inline children code its not working
-    # Refernce the inline class 
-    # inlines = [TriggerInline,]
-
-
+    #  this is the inline children code its not working
+    # refrence the inline 
+    inlines = [MovieAdminInline]
 
 #   COMPUTED COLUMN
     @admin.display(ordering='TopMovies' ,description="Is it in the top movies ?",boolean=True)
@@ -54,6 +59,15 @@ class MovieAdmin(admin.ModelAdmin):
             return True  
         return False
     #    OVEERINDING BASE QUERYSET
+
+       
+    @admin.display(ordering = 'age_rating')
+    def age_rating_status(self, movie:models.Movie):
+        if movie.age_rating == 'G':
+            return 'safe'
+        return 'unsafe'
+    
+
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(TopMovies=Value(True))
     
@@ -62,6 +76,7 @@ class MovieAdmin(admin.ModelAdmin):
     def trigger_name(self,movie:models.Movie):
         return movie.trigger.name
     
+
 
 
 
@@ -81,15 +96,7 @@ class ViewerAdmin(admin.ModelAdmin):
 
 
 
-#this is the inline children code its not working
-# we can create a movie while creating a list
-# add a children inline 
-# class MovieInline(admin.StackedInline):
-#     # overriding thew model i want to make it inline
-#     model = models.Movie
-#     extra = 0
-#     # what is the name of the fk 
-#     fk_name = model.trigger
+
 
 
 
@@ -103,10 +110,8 @@ class ListAdmin(admin.ModelAdmin):
     list_per_page=10
     list_filter=['name']
 
+    
 
-    #  this is the inline children code its not working
-    # refrence the inline 
-    # inlines = [MovieInline,]
 
 
 # TRIGGER MODEL
@@ -120,6 +125,10 @@ class TriggerAdmin(admin.ModelAdmin):
     list_filter=['name']
     # search field so it can be used in the autocomplete field
     search_fields=['trigger']
+
+    # this is the inline children code its not working
+    # Refernce the inline class 
+    inlines = [TriggerAdminInline]
 
 
 # GENRE MODEL
