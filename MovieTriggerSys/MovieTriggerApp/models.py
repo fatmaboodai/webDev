@@ -24,15 +24,18 @@ class Movie(models.Model):
     title = models.CharField(max_length = 255)
     description = models.TextField()
     age_rating = models.CharField(max_length  = 4, choices = AGE_RATINGS, default = RATED_G)
-    genre = models.ForeignKey('Genre', on_delete=models.PROTECT,null=True)
-    trigger = models.ForeignKey('Trigger', on_delete=models.PROTECT,null=True)
-    review = models.ForeignKey('Review', on_delete=models.PROTECT,null=True)
+    genre = models.ForeignKey('Genre', on_delete=models.PROTECT)
+    trigger = models.ForeignKey('Trigger', on_delete=models.PROTECT)
+    review = models.ForeignKey('Review', on_delete=models.PROTECT)
 
 
 
 class Trigger(models.Model):
     name = models.CharField(max_length = 255)
     description = models.TextField()
+
+    def __str__(self):
+        return self.name
 
 class Genre(models.Model):
     ACTION = 'A'
@@ -56,9 +59,9 @@ class Genre(models.Model):
 
 class Review(models.Model):
     RID = models.CharField(max_length = 255, primary_key=True)
-    Viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT,null=True)
-    description = models.TextField(null=True)
-    rating = models.IntegerField(validators = (MinValueValidator(1),MaxValueValidator(5)),null=True)
+    Viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT)
+    description = models.TextField()
+    rating = models.IntegerField(validators = (MinValueValidator(1),MaxValueValidator(5)))
 
 
 
@@ -71,5 +74,5 @@ class List(models.Model):
     LID = models.CharField(max_length = 255, primary_key=True)
     name = models.CharField(max_length = 255)
     description = models.TextField()
-    movie = models.ForeignKey('Movie', on_delete=models.PROTECT,null=True)
-    viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT,null=True)
+    movie = models.ForeignKey('Movie', on_delete=models.PROTECT)
+    viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT)

@@ -12,11 +12,12 @@ from django.utils.html import format_html
 class MovieAdmin(admin.ModelAdmin):
     # display fields 
     # fields=[("description","")]
-    list_display=['MID','title','description','age_rating','TopMovies',"trigger__name"]
+    fields = ['trigger']
+    list_display=['MID','title','description','age_rating','TopMovies', 'trigger','trigger_name']
     list_editable=['age_rating']
     list_per_page=20
     list_filter=['age_rating']
-    list_select_related=['trigger']
+    #list_select_related=['trigger']
     # ordering = ['Top5']
 
     @admin.display(ordering='TopMovies' ,description="Is it in the top movies ?",boolean=True)
@@ -32,8 +33,9 @@ class MovieAdmin(admin.ModelAdmin):
     
 
     @admin.display(ordering='trigger__name')
-    def trigger__name(self,movie:models.Movie):
+    def trigger_name(self,movie:models.Movie):
         return movie.trigger.name
+    
 
 
 
