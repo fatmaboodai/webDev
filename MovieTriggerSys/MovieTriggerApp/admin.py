@@ -10,23 +10,24 @@ from django.utils.html import format_html
 
 
 
-#  this is the inline children code its not working
-# # we can write a trigger while creating a movie 
-# # add a children inline 
+
+#  we can create a movie while creating a trigger 
+#  add a children inline 
 class TriggerAdminInline(admin.StackedInline):
     # overriding thew model i want to make it inline
     model = models.Movie
     extra = 0
 
-#this is the inline children code its not working
+
 # we can create a movie while creating a list
 # add a children inline 
 class MovieAdminInline(admin.StackedInline):
     # overriding thew model i want to make it inline
     model = models.List
     extra = 0
-    # what is the name of the fk 
-    # fk_name = model.trigger
+
+
+
 
 # CUSTOM FILTER
 class RatingFilter(admin.SimpleListFilter):
@@ -63,16 +64,22 @@ class MovieAdmin(admin.ModelAdmin):
     list_display=['MID','title','description','age_rating','TopMovies','trigger_name', 'age_rating_status']
     list_editable=['age_rating']
     list_per_page=20
+
     # add filter to the page that sorts by age rating
     list_filter=['age_rating', RatingFilter]
     #list_select_related=['trigger']
     # ordering = ['Top5']
 
+    list_filter=['age_rating']
+
+
     # to make the genre and the trigger searcheable in the form
     autocomplete_fields=['trigger','genre']
-    #  this is the inline children code its not working
+
     # refrence the inline 
     inlines = [MovieAdminInline]
+
+
 
 #   COMPUTED COLUMN
     @admin.display(ordering='TopMovies' ,description="Is it in the top movies ?",boolean=True)
@@ -82,9 +89,9 @@ class MovieAdmin(admin.ModelAdmin):
         if Movie.title == "Hot Rod":
             return True  
         return False
-    #    OVEERINDING BASE QUERYSET
+    
+    # OVEERINDING BASE QUERYSET
 
-       
     @admin.display(ordering = 'age_rating')
     def age_rating_status(self, movie:models.Movie):
         if movie.age_rating == 'G':
@@ -96,7 +103,9 @@ class MovieAdmin(admin.ModelAdmin):
         return super().get_queryset(request).annotate(TopMovies=Value(True))
     
 # RELATED CLOUMN
+
 # TRIGGER NAME IN MOVIE LINKS TO OTHER PAGE
+
     @admin.display(ordering='trigger__name')
     def trigger_name(self,movie:models.Movie):
         return format_html('<a href= "http://www.google.com"> {} </a>', movie.trigger.name)
@@ -107,9 +116,6 @@ class MovieAdmin(admin.ModelAdmin):
         string_update = queryset.update(age_rating = '')
         self.message_user(request,
                           f'{string_update} products has been updated successfully')
-
-
-
 
 
 
@@ -159,6 +165,8 @@ class TriggerAdmin(admin.ModelAdmin):
     # this is the inline children code its not working
     # Refernce the inline class 
     inlines = [TriggerAdminInline]
+
+
 
 
 # GENRE MODEL
