@@ -1,5 +1,6 @@
 from django.contrib import admin
 from . import models
+from django.utils.html import format_html
 from django.urls import reverse
 from django.db.models import Count,Value
 from django.utils.http import  urlencode
@@ -27,20 +28,43 @@ class MovieAdminInline(admin.StackedInline):
     # what is the name of the fk 
     # fk_name = model.trigger
 
+# CUSTOM FILTER
+class RatingFilter(admin.SimpleListFilter):
+    title = 'Age rating status'
+    parameter_name = 'age_rating'
+
+    def lookups(self, request, model_admin):
+        return [
+            ('G', 'safe'),
+            ('PG13', 'unsafe')
+        ]
+    
+    def queryset(self, request, queryset):
+        if self.value() == 'G':
+            return queryset.filter( age_rating = 'G')
+        if self.value() == 'PG':
+            return queryset.filter( age_rating = 'PG')
+        if self.value() == 'R':
+            return queryset.filter( age_rating = 'R')
+        if self.value() == 'PG13':
+            return queryset.filter( age_rating = 'PG13')
+    
 # MOVIE MODEL
 @admin.register(models.Movie)
 class MovieAdmin(admin.ModelAdmin):
     # form fields
     fields=[("title","description"),('age_rating','trigger','genre')]
+    # action
+    actions = ['clear_rating']
     # search field so it can be searchable 
     search_fields=['title']
-    
     # display fields 
     fields = ['trigger']
     list_display=['MID','title','description','age_rating','TopMovies','trigger_name', 'age_rating_status']
     list_editable=['age_rating']
     list_per_page=20
-    list_filter=['age_rating']
+    # add filter to the page that sorts by age rating
+    list_filter=['age_rating', RatingFilter]
     #list_select_related=['trigger']
     # ordering = ['Top5']
 
@@ -72,11 +96,17 @@ class MovieAdmin(admin.ModelAdmin):
         return super().get_queryset(request).annotate(TopMovies=Value(True))
     
 # RELATED CLOUMN
+# TRIGGER NAME IN MOVIE LINKS TO OTHER PAGE
     @admin.display(ordering='trigger__name')
     def trigger_name(self,movie:models.Movie):
-        return movie.trigger.name
-    
+        return format_html('<a href= "http://www.google.com"> {} </a>', movie.trigger.name)
 
+# CREATE CUSTOM ACTION
+    @admin.action(description='Clear Rating')
+    def clear_rating(self, request, queryset):
+        string_update = queryset.update(age_rating = '')
+        self.message_user(request,
+                          f'{string_update} products has been updated successfully')
 
 
 
