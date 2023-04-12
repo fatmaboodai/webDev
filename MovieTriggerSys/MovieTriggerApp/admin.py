@@ -5,10 +5,13 @@ from django.urls import reverse
 from django.db.models import Count,Value
 from django.utils.http import  urlencode
 from django.utils.html import format_html
+
+
+# SUPERUSER INFO
+# Username : admin
+# Password: project123
+
 # Register your models here.
-
-
-
 
 
 #  we can create a movie while creating a trigger 
