@@ -82,8 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME':'MovieTriggerApp',
         'HOST': 'localhost',
-        'USER':'root',
-        'PASSWORD':'JannaDB01.'
+        'USER':'root'
     }
 }
 # Password validation
