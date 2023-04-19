@@ -26,10 +26,10 @@ class MovieSerializer(serializers.ModelSerializer):
     genre = GenreSerializer()
 
     # hyperlink related field
-    # trigger = serializers.HyperlinkedRelatedField(
-    #     queryset= Trigger.objects.all(),
-    #     view_name='trigger-details'
-    #       )
+    trigger = serializers.HyperlinkedRelatedField(
+        queryset= Trigger.objects.all(),
+        view_name='trigger-detail'
+          )
 
         
 # Reviw serlizer
