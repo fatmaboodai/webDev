@@ -4,5 +4,16 @@ from django.contrib import admin
 urlpatterns = [
     path('admin/',admin.site.urls),
     path('MovieTriggerProject/',views.ViewPage),
+    #  to view the movies in the api 
+    # path('movies/',views.MovieList),
+    # to view each movie seperatly
+    # path('movies/<int:id>',views.MovieDetail),
+    # path('lists/',views.List_of_Lists),
+    # path('triggers/',views.trigger_list),
 
+
+
+    # hyperlink related fields
+    # path('triggers/<int:pk>',views.trigger_details,name='trigger-details'),
+    # path('reviews/',views.review_list)
 ]

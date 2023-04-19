@@ -64,7 +64,7 @@ class MovieAdmin(admin.ModelAdmin):
     search_fields=['title']
     # display fields 
     fields = ['trigger']
-    list_display=['MID','title','description','age_rating','TopMovies','trigger_name', 'age_rating_status']
+    list_display=['MID','title','description','age_rating','TopMovies','trigger_name', 'age_rating_status','review']
     list_editable=['age_rating']
     list_per_page=20
 
@@ -105,6 +105,11 @@ class MovieAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(TopMovies=Value(True))
     
+    # testing importing the review in movies
+    def review(self,review:models.Review):
+        return review.description
+    
+    
 # RELATED CLOUMN
 
 # TRIGGER NAME IN MOVIE LINKS TO OTHER PAGE
@@ -132,8 +137,6 @@ class ViewerAdmin(admin.ModelAdmin):
     list_display=['VID','email','password']
     list_per_page=10
     list_filter=['email']
-
-
 
 
 
@@ -195,7 +198,7 @@ class ReviewAdmin(admin.ModelAdmin):
     # form fields
     fields=[("description"),('age_rating','movie','viewer')]
     # display fields 
-    list_display=['RID','description','rating']
+    list_display=['RID','description','rating','Viewer','movie']
     list_per_page=10
     list_filter=['rating']
 

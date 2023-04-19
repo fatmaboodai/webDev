@@ -38,7 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'MovieTriggerApp',
-    'debug_toolbar'
+    'debug_toolbar',
+    'django_filters',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -83,6 +85,7 @@ DATABASES = {
         'NAME':'MovieTriggerApp',
         'HOST': 'localhost',
         'USER':'root',
+        'PASSWORD':'fatma2001'
     }
 }
 # Password validation
@@ -131,3 +134,7 @@ INTERNAL_IPS = [
  "127.0.0.1",
  # ...
 ] 
+
+REST_FRAMEWORK = {
+    'COERCE_DECIMAL_TO_STRING':False
+}
