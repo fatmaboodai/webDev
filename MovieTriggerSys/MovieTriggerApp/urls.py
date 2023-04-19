@@ -5,6 +5,10 @@ from rest_framework.routers import SimpleRouter
 
 
 # define routers
+
+# router = routers.DefaultRouter()
+# movie_router = routers.NestedDefaultRouter(router, 'movies', lookup = 'movie')
+
 router = SimpleRouter()
 router.register('movies', views.MovieViewSet)
 router.register('reviews', views.ReviewViewSet)
@@ -17,7 +21,7 @@ router.register('genres', views.GenreViewSet)
 urlpatterns = [
     path('admin/',admin.site.urls),
     #path('MovieTriggerProject/',views.ViewPage),
-    path('', include(router.urls))
+    path('', include(router.urls)), 
     #  to view the movies in the api 
     # path('movies/',views.MovieList),
     # to view each movie seperatly
