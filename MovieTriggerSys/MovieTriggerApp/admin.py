@@ -63,7 +63,7 @@ class MovieAdmin(admin.ModelAdmin):
     # search field so it can be searchable 
     search_fields=['title']
     # display fields 
-    fields = ['trigger']
+    # fields = ['trigger']
     list_display=['MID','title','description','age_rating','TopMovies','trigger_name', 'age_rating_status','review']
     list_editable=['age_rating']
     list_per_page=20
