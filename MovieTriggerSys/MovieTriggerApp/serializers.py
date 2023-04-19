@@ -5,12 +5,12 @@ from decimal import Decimal
 
 
 # genre serlizer
-class GenreSerlizer(serializers.ModelSerializer):
+class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ['genre']
 # Movie serlizer
-class MovieSerlizer(serializers.ModelSerializer):
+class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         # genre , trigger ARE  RELATED FIELDS AS A PK
@@ -23,17 +23,17 @@ class MovieSerlizer(serializers.ModelSerializer):
     #Related field as string
     trigger = serializers.StringRelatedField()
     # nested serlizer
-    genre = GenreSerlizer()
+    genre = GenreSerializer()
 
     # hyperlink related field
-    trigger = serializers.HyperlinkedRelatedField(
-        queryset= Trigger.objects.all(),
-        view_name='trigger-details'
-          )
+    # trigger = serializers.HyperlinkedRelatedField(
+    #     queryset= Trigger.objects.all(),
+    #     view_name='trigger-details'
+    #       )
 
         
 # Reviw serlizer
-class ReviewSerlizer(serializers.ModelSerializer):
+class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         # MOVIE , VIEWER ARE  RELATED FIELDS AS A PK
@@ -52,7 +52,7 @@ class ReviewSerlizer(serializers.ModelSerializer):
 
 
 # Trigger serlizer
-class TriggerSerlizer(serializers.ModelSerializer):
+class TriggerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Trigger
         fields = ['id','name','description']
@@ -64,7 +64,7 @@ class TriggerSerlizer(serializers.ModelSerializer):
 
 
 # Viewer serlizer
-class ViewerSerlizer(serializers.ModelSerializer):
+class ViewerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Viewer
         fields = ['VID','email','password']
@@ -74,7 +74,7 @@ class ViewerSerlizer(serializers.ModelSerializer):
 
 
 # List serlizer
-class ListSerlizer(serializers.ModelSerializer):
+class ListSerializer(serializers.ModelSerializer):
     class Meta:
         model = List
         # MOVIE , VIEWER ARE  RELATED FIELDS AS A PK
