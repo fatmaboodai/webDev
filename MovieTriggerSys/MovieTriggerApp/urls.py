@@ -1,11 +1,12 @@
 from django.urls import path, include
 from . import views 
 from django.contrib import admin
-from rest_framework.routers import SimpleRouter
+from rest_framework.routers import SimpleRouter,DefaultRouter
+from rest_framework_nested import routers
 
 
 # define routers
-router = SimpleRouter()
+router = routers.DefaultRouter()
 router.register('movies', views.MovieViewSet)
 router.register('reviews', views.ReviewViewSet)
 router.register('triggers', views.TriggerViewSet)
@@ -13,11 +14,17 @@ router.register('lists', views.ListViewSet)
 router.register('viewers', views.ViewerViewSet)
 router.register('genres', views.GenreViewSet)
 
+movie_router = routers.NestedDefaultRouter(router,'movies',lookup='movie')
+movie_router.register('reviews',views.ReviewViewSet,basename='movie-review')
 
-urlpatterns = [
-    path('admin/',admin.site.urls),
+movie_viewer = routers.NestedDefaultRouter(router,'viewers',lookup='viewer')
+movie_viewer.register('reviews',views.ReviewViewSet,basename='viewer-review')
+
+urlpatterns = router.urls+movie_router.urls+movie_viewer.urls
+# urlpatterns = [
+    # path('admin/',admin.site.urls),
     #path('MovieTriggerProject/',views.ViewPage),
-    path('', include(router.urls))
+    # path('', include(router.urls))
     #  to view the movies in the api 
     # path('movies/',views.MovieList),
     # to view each movie seperatly
@@ -30,4 +37,4 @@ urlpatterns = [
     # hyperlink related fields
     # path('triggers/<int:pk>',views.trigger_details,name='trigger-details'),
     # path('reviews/',views.review_list)
-]
+# ]

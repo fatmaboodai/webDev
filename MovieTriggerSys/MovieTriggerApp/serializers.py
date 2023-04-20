@@ -48,6 +48,13 @@ class ReviewSerializer(serializers.ModelSerializer):
     # primarykey related fiel
     RID = serializers.PrimaryKeyRelatedField(read_only=True)
 
+    def create(self, validated_data):
+        # movie_id=self.context('movie_id')
+        viewer_id = self.context('Viewer_id')
+        return Review.objects.create(viewer_id=viewer_id,**validated_data)
+
+        # return Review.objects.create(movie_id=movie_id,**validated_data)
+
 
 
 
@@ -72,20 +79,28 @@ class ViewerSerializer(serializers.ModelSerializer):
     # primarykey related fiel
     VID = serializers.PrimaryKeyRelatedField(read_only=True)
 
-
+# custom serlizer
+class SimpleMovieSerlizer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        fields=['title','genre','trigger']
+    genre = serializers.StringRelatedField()
+    trigger = serializers.StringRelatedField()
+    
 # List serlizer
 class ListSerializer(serializers.ModelSerializer):
+    movie = SimpleMovieSerlizer()
     class Meta:
         model = List
         # MOVIE , VIEWER ARE  RELATED FIELDS AS A PK
         fields = ['LID','name','movie','viewer','NumOfMovies']
 
 
-    #Related field as string
-    movie = serializers.StringRelatedField()
+    # #Related field as string
+    # movie = serializers.StringRelatedField()
     viewer = serializers.StringRelatedField()
 
-    # primarykey related fiel
+    # # primarykey related fiel
     LID = serializers.PrimaryKeyRelatedField(read_only=True)
     
 

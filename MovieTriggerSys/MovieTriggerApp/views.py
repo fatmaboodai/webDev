@@ -7,7 +7,7 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from django.db.models import Count
 from rest_framework.views import APIView
-from rest_framework.mixins import ListModelMixin
+from rest_framework.mixins import ListModelMixin,CreateModelMixin,RetrieveModelMixin,DestroyModelMixin
 from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
 from django_filters.rest_framework import DjangoFilterBackend
 from .filters import MovieFilter
@@ -39,6 +39,14 @@ class ReviewViewSet(ModelViewSet):
     search_fields = ['RID']
     filterset_fields = ['RID']
     ordering_fields = ['RID']
+    pagination_class = DefaultPagination
+
+    def get_queryset(self):
+        # return Review.objects.filter(movie_id=self.kwargs['movie_pk'])
+        return Review.objects.filter(Viewer_id=self.kwargs['viewer_pk'])
+    def get_serializer_context(self):
+        return {'Viewer_id':self.kwargs['viewer_pk']}
+        # return {'movie_id':self.kwargs['movie_pk']}
 
     def destroy(self, request, *args, **kwargs):
         if Movie.objects.filter(review=kwargs['pk']).count() > 0:
@@ -55,6 +63,7 @@ class TriggerViewSet(ModelViewSet):
     search_fields = ['name', 'description']
     filterset_fields = ['name']
     ordering_fields = ['name']
+    # custom pagination
     pagination_class = DefaultPagination
 
     def destroy(self, request, *args, **kwargs):
@@ -64,6 +73,7 @@ class TriggerViewSet(ModelViewSet):
     
 
 class GenreViewSet(ModelViewSet):
+    # here it uses the normal pagination
     queryset = Genre.objects.all()
     serializer_class = GenreSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
