@@ -21,6 +21,10 @@ movie_viewer = routers.NestedDefaultRouter(router,'viewers',lookup='viewer')
 movie_viewer.register('reviews',views.ReviewViewSet,basename='viewer-review')
 
 urlpatterns = router.urls+movie_router.urls+movie_viewer.urls
+
+
+
+
 # urlpatterns = [
     # path('admin/',admin.site.urls),
     #path('MovieTriggerProject/',views.ViewPage),

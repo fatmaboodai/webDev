@@ -9,6 +9,10 @@ class GenreSerializer(serializers.ModelSerializer):
     class Meta:
         model = Genre
         fields = ['genre']
+
+
+
+
 # Movie serlizer
 class MovieSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,7 +48,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     movie = serializers.StringRelatedField()
     Viewer = serializers.StringRelatedField()
 
-
     # primarykey related fiel
     RID = serializers.PrimaryKeyRelatedField(read_only=True)
 
@@ -54,8 +57,6 @@ class ReviewSerializer(serializers.ModelSerializer):
         return Review.objects.create(viewer_id=viewer_id,**validated_data)
 
         # return Review.objects.create(movie_id=movie_id,**validated_data)
-
-
 
 
 # Trigger serlizer
@@ -79,6 +80,9 @@ class ViewerSerializer(serializers.ModelSerializer):
     # primarykey related fiel
     VID = serializers.PrimaryKeyRelatedField(read_only=True)
 
+
+
+
 # custom serlizer
 class SimpleMovieSerlizer(serializers.ModelSerializer):
     class Meta:
@@ -87,6 +91,10 @@ class SimpleMovieSerlizer(serializers.ModelSerializer):
     genre = serializers.StringRelatedField()
     trigger = serializers.StringRelatedField()
     
+
+
+
+
 # List serlizer
 class ListSerializer(serializers.ModelSerializer):
     movie = SimpleMovieSerlizer()
@@ -103,7 +111,6 @@ class ListSerializer(serializers.ModelSerializer):
     # # primarykey related fiel
     LID = serializers.PrimaryKeyRelatedField(read_only=True)
     
-
 
     # COMPUTED COLUMN SERLIZER 
     NumOfMovies = serializers.SerializerMethodField(method_name='get_NumOfMovies')

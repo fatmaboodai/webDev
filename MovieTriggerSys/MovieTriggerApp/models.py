@@ -86,5 +86,5 @@ class List(models.Model):
     name = models.CharField(max_length = 255)
      #  blank is for the admin interface validation that the description is optional (form validation)
     description = models.TextField(blank=True)
-    movie = models.ForeignKey('Movie', on_delete=models.PROTECT , related_name='items')
+    movie = models.ForeignKey('Movie', on_delete=models.PROTECT)
     viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT)
