@@ -25,38 +25,43 @@ class MovieSerializer(serializers.ModelSerializer):
     MID = serializers.PrimaryKeyRelatedField(read_only=True)
 
     #Related field as string
-    trigger = serializers.StringRelatedField()
+    # trigger = serializers.StringRelatedField()
     # nested serlizer
     genre = GenreSerializer()
 
-    # hyperlink related field
-    # trigger = serializers.HyperlinkedRelatedField(
-    #     queryset= Trigger.objects.all(),
-    #     view_name='trigger-details'
-    #       )
 
         
+
+        
+# custom serlizer
+class SimpleMovieSerlizer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        fields=['title','genre','trigger']
+    genre = serializers.StringRelatedField()
+    trigger = serializers.StringRelatedField()
+    
+
 # Reviw serlizer
 class ReviewSerializer(serializers.ModelSerializer):
+    movie = SimpleMovieSerlizer()
     class Meta:
         model = Review
         # MOVIE , VIEWER ARE  RELATED FIELDS AS A PK
         fields = ['RID','Viewer','description','rating','movie']
 
-    
-    #Related field as string
-    movie = serializers.StringRelatedField()
+
+    # string related field
     Viewer = serializers.StringRelatedField()
 
+
+   
     # primarykey related fiel
     RID = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def create(self, validated_data):
-        # movie_id=self.context('movie_id')
-        viewer_id = self.context('Viewer_id')
-        return Review.objects.create(viewer_id=viewer_id,**validated_data)
-
-        # return Review.objects.create(movie_id=movie_id,**validated_data)
+        movie_id=self.context('movie_id')
+        return Review.objects.create(movie_id=movie_id,**validated_data)
 
 
 # Trigger serlizer
@@ -67,7 +72,6 @@ class TriggerSerializer(serializers.ModelSerializer):
     # primarykey related fiel
     # not sure
     id = serializers.PrimaryKeyRelatedField(read_only=True)
-
 
 
 
@@ -83,21 +87,12 @@ class ViewerSerializer(serializers.ModelSerializer):
 
 
 
-# custom serlizer
-class SimpleMovieSerlizer(serializers.ModelSerializer):
-    class Meta:
-        model = Movie
-        fields=['title','genre','trigger']
-    genre = serializers.StringRelatedField()
-    trigger = serializers.StringRelatedField()
-    
-
 
 
 
 # List serlizer
 class ListSerializer(serializers.ModelSerializer):
-    movie = SimpleMovieSerlizer()
+
     class Meta:
         model = List
         # MOVIE , VIEWER ARE  RELATED FIELDS AS A PK
@@ -105,12 +100,18 @@ class ListSerializer(serializers.ModelSerializer):
 
 
     # #Related field as string
-    # movie = serializers.StringRelatedField()
     viewer = serializers.StringRelatedField()
 
     # # primarykey related fiel
     LID = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    # hyperlink related field
+    movie = serializers.HyperlinkedRelatedField(
+        queryset= Movie.objects.all(),
+        view_name='movie-detail'
+          )
     
+
 
     # COMPUTED COLUMN SERLIZER 
     NumOfMovies = serializers.SerializerMethodField(method_name='get_NumOfMovies')
@@ -118,6 +119,14 @@ class ListSerializer(serializers.ModelSerializer):
         # not ORM
         movies = list.movie.MID
         return len(movies)
+    
+
+
+    
+
+
+
+
     
 
     

@@ -42,11 +42,11 @@ class ReviewViewSet(ModelViewSet):
     pagination_class = DefaultPagination
 
     def get_queryset(self):
-        # return Review.objects.filter(movie_id=self.kwargs['movie_pk'])
-        return Review.objects.filter(Viewer_id=self.kwargs['viewer_pk'])
+        return Review.objects.filter(movie_id=self.kwargs['movie_pk'])
+
     def get_serializer_context(self):
-        return {'Viewer_id':self.kwargs['viewer_pk']}
-        # return {'movie_id':self.kwargs['movie_pk']}
+
+        return {'movie_id':self.kwargs['movie_pk']}
 
     def destroy(self, request, *args, **kwargs):
         if Movie.objects.filter(review=kwargs['pk']).count() > 0:
