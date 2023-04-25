@@ -1,8 +1,8 @@
 from django.db import models
 from django.forms import ValidationError
-
 from django.core.validators import MinValueValidator,MaxValueValidator,MinLengthValidator,MaxLengthValidator
-
+from uuid import uuid4
+import uuid
 
 # Create your models here.
 
@@ -21,7 +21,7 @@ class Movie(models.Model):
         (RATED_R, 'R')
     ]
 
-    MID = models.CharField(max_length = 255, primary_key=True)
+    MID = models.CharField(max_length = 255, primary_key=True,auto_created=True)
     title = models.CharField(max_length = 255)
     #  blank is for the admin interface validation that the description is optional (form validation)
     description = models.TextField(blank=True)
@@ -31,7 +31,6 @@ class Movie(models.Model):
     trigger = models.ForeignKey('Trigger', on_delete=models.PROTECT,blank=True)
     def __str__(self):
         return self.title
-
 
 
 class Trigger(models.Model):
@@ -63,10 +62,17 @@ class Genre(models.Model):
     def __str__(self):
         return self.genre
     
+class Viewer(models.Model):
+    VID = models.CharField(max_length = 255, primary_key=True,auto_created=True)
+    email = models.EmailField(unique = True)
+    # Validators for the viewer's password
+    password = models.CharField(max_length=255 , validators=[MinLengthValidator(8),MaxLengthValidator(20)])
+    def __str__(self):
+        return self.email
 
 class Review(models.Model):
-    RID = models.CharField(max_length = 255, primary_key=True)
-    Viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT)
+    RID = models.CharField(max_length = 255, primary_key=True,auto_created=True)
+    Viewer = models.ForeignKey(Viewer, on_delete=models.PROTECT)
     #  blank is for the admin interface validation that the description is optional (form validation)
     description = models.TextField(blank=True)
     # form validations for the ratings
@@ -75,18 +81,8 @@ class Review(models.Model):
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
     
 
-
-
-class Viewer(models.Model):
-    VID = models.CharField(max_length = 255, primary_key=True)
-    email = models.EmailField(unique = True)
-    # Validators for the viewer's password
-    password = models.CharField(max_length=255 , validators=[MinLengthValidator(8),MaxLengthValidator(20)])
-    def __str__(self):
-        return self.email
-
 class List(models.Model):
-    LID = models.CharField(max_length = 255, primary_key=True)
+    LID =  models.CharField(max_length = 255, primary_key=True,auto_created=True)
     name = models.CharField(max_length = 255)
      #  blank is for the admin interface validation that the description is optional (form validation)
     description = models.TextField(blank=True)
