@@ -26,6 +26,7 @@
         .container{
     height: 100vh;
     display: flex;
+    /* flex-wrap: wrap; */
     justify-content: center;
         }
 
@@ -77,6 +78,36 @@
             </ul>
         </ul>
      </div>
+     <div class="genre">
+        <div class="header">
+            <h2>Movie genre</h2> 
+            </div>
+           <ul>
+               <ul>
+                   {% for i in queryset%}
+                   <li>
+                       {{i.genre}}
+                       </li>
+                       {% endfor %}
+               </ul>
+           </ul>
+        </div>
+        <div class="trigger">
+            <div class="header">
+                <h2>Movie trigger</h2> 
+                </div>
+       
+            <ul>
+                <ul>
+                    {% for i in queryset%}
+                    <li>
+                        {{i.trigger}}
+                        </li>
+                        {% endfor %}
+                </ul>
+            </ul>
+        </div>
+         </div>
 </div>
 </body>
 </html>

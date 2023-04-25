@@ -13,6 +13,8 @@ router.register('triggers', views.TriggerViewSet)
 router.register('lists', views.ListViewSet)
 router.register('viewers', views.ViewerViewSet)
 router.register('genres', views.GenreViewSet)
+# router.register('hello',views.ViewPage)
+
 # router.register('triggers',views.TriggerViewSet,basename='trigger-details')
 
 
@@ -23,14 +25,14 @@ movie_viewer = routers.NestedDefaultRouter(router,'viewers',lookup='viewer')
 movie_viewer.register('reviews',views.ReviewViewSet,basename='viewer-review')
 
 
-urlpatterns = router.urls+movie_router.urls+movie_viewer.urls
+urlpatterns = router.urls+movie_router.urls+movie_viewer.urls +[path('hello/',views.ViewPage)]
 
 
 
 
 # urlpatterns = [
     # path('admin/',admin.site.urls),
-    # path('MovieTriggerProject/',views.ViewPage),
+    # path('hello/',views.ViewPage),
     # path('', include(router.urls))
     #  to view the movies in the api 
     # path('movies/',views.MovieList),

@@ -17,6 +17,12 @@ from .pagination import DefaultPagination
 # Create your views here.
 
 
+def ViewPage(request):
+    # queryset = Movie.objects.all()
+    queryset = Movie.objects.select_related('trigger', 'genre').all()
+    list(queryset)
+    return render(request,'MovieTriggerApp/index.html',{'name':'This is our Movie list','queryset':queryset})
+
 class MovieViewSet(ModelViewSet):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer

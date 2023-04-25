@@ -1,11 +1,10 @@
 from django.contrib import admin
 from . import models
-from django.utils.html import format_html
+from django.utils.html import format_html 
 from django.urls import reverse
 from django.db.models import Count,Value
 from django.utils.http import  urlencode
-from django.utils.html import format_html
-
+from django.shortcuts import redirect
 
 # SUPERUSER INFO
 # Username : admin
@@ -58,30 +57,32 @@ class RatingFilter(admin.SimpleListFilter):
 class MovieAdmin(admin.ModelAdmin):
     # form fields
     fields=[("title","description"),('age_rating','trigger','genre')]
+    # to make the genre and the trigger searcheable in the form
+    autocomplete_fields=['genre']
+
     # action
     actions = ['clear_rating']
-    # search field so it can be searchable 
-    search_fields=['title']
-    # display fields 
+        # display fields 
     # fields = ['trigger']
-    list_display=['MID','title','description','age_rating','TopMovies','trigger_name', 'age_rating_status','review']
+    list_display=['MID','title','description','age_rating','TopMovies','trigger_name','age_rating_status','review','genre']
     list_editable=['age_rating']
     list_per_page=20
 
+    # search field so it can be searchable 
+    search_fields=['title','trigger__name','trigger','genre']
+
     # add filter to the page that sorts by age rating
-    list_filter=['age_rating', RatingFilter]
-    #list_select_related=['trigger']
+    # custom filter ?
+    # list_filter=['age_rating', RatingFilter]
+    list_filter=[ RatingFilter]
+    list_select_related=['trigger']
     # ordering = ['Top5']
 
     list_filter=['age_rating']
 
 
-    # to make the genre and the trigger searcheable in the form
-    autocomplete_fields=['trigger','genre']
-
     # refrence the inline 
     inlines = [MovieAdminInline]
-
 
 
 #   COMPUTED COLUMN
@@ -113,10 +114,10 @@ class MovieAdmin(admin.ModelAdmin):
 # RELATED CLOUMN
 
 # TRIGGER NAME IN MOVIE LINKS TO OTHER PAGE
-
     @admin.display(ordering='trigger__name')
     def trigger_name(self,movie:models.Movie):
-        return format_html('<a href= "http://www.google.com"> {} </a>', movie.trigger.name)
+        return format_html('<a href= "http://127.0.0.1:8000/admin/MovieTriggerApp/trigger/?name={}"> {} </a>', movie.trigger.name, movie.trigger.name)
+        # return redirect('admin:MovieTriggerApp/admin/TriggerAdmin', movie.trigger.name)
 
 # CREATE CUSTOM ACTION
     @admin.action(description='Clear Rating')
@@ -196,7 +197,7 @@ class GenreAdmin(admin.ModelAdmin):
 @admin.register(models.Review)
 class ReviewAdmin(admin.ModelAdmin):
     # form fields
-    fields=[("description"),('age_rating','movie','viewer')]
+    fields=[("description"),('rating','movie','Viewer')]
     # display fields 
     list_display=['RID','description','rating','Viewer','movie']
     list_per_page=10

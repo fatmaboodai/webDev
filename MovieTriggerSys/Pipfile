@@ -13,3 +13,4 @@ django-filter = "*"
 
 [requires]
 python_version = "3.11"
+django-debug--toolbar = "*"
