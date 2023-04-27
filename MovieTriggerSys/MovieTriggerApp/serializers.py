@@ -18,11 +18,11 @@ class MovieSerializer(serializers.ModelSerializer):
     class Meta:
         model = Movie
         # genre , trigger ARE  RELATED FIELDS AS A PK
-        fields = ['MID','title','description','age_rating','genre','trigger']
+        fields = ['id','title','description','age_rating','genre','trigger']
 
     # primarykey related fiel
     # not sure
-    MID = serializers.PrimaryKeyRelatedField(read_only=True)
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
 
     #Related field as string
     # trigger = serializers.StringRelatedField()
@@ -48,7 +48,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Review
         # MOVIE , VIEWER ARE  RELATED FIELDS AS A PK
-        fields = ['RID','Viewer','description','rating','movie']
+        fields = ['id','Viewer','description','rating','movie']
 
 
     # string related field
@@ -57,7 +57,7 @@ class ReviewSerializer(serializers.ModelSerializer):
 
    
     # primarykey related fiel
-    RID = serializers.PrimaryKeyRelatedField(read_only=True)
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
 
     def create(self, validated_data):
         movie_id=self.context('movie_id')
@@ -79,10 +79,10 @@ class TriggerSerializer(serializers.ModelSerializer):
 class ViewerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Viewer
-        fields = ['VID','email','password']
+        fields = ['id','email','password']
 
     # primarykey related fiel
-    VID = serializers.PrimaryKeyRelatedField(read_only=True)
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
 
 
 
@@ -96,14 +96,14 @@ class ListSerializer(serializers.ModelSerializer):
     class Meta:
         model = List
         # MOVIE , VIEWER ARE  RELATED FIELDS AS A PK
-        fields = ['LID','name','movie','viewer','NumOfMovies']
+        fields = ['id','name','movie','viewer','NumOfMovies']
 
 
     # #Related field as string
     viewer = serializers.StringRelatedField()
 
     # # primarykey related fiel
-    LID = serializers.PrimaryKeyRelatedField(read_only=True)
+    id = serializers.PrimaryKeyRelatedField(read_only=True)
 
     # hyperlink related field
     movie = serializers.HyperlinkedRelatedField(
@@ -117,8 +117,10 @@ class ListSerializer(serializers.ModelSerializer):
     NumOfMovies = serializers.SerializerMethodField(method_name='get_NumOfMovies')
     def get_NumOfMovies(self,list:List):
         # not ORM
-        movies = list.movie.MID
-        return len(movies)
+        movies=0
+        if list.movie.id:
+            movies+=1
+        return movies
     
 
 

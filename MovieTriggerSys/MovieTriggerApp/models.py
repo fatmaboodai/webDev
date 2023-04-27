@@ -21,7 +21,6 @@ class Movie(models.Model):
         (RATED_R, 'R')
     ]
 
-    # MID = models.CharField(max_length = 255, primary_key=True,auto_created=True)
     title = models.CharField(max_length = 255)
     #  blank is for the admin interface validation that the description is optional (form validation)
     description = models.TextField(blank=True)
@@ -62,16 +61,20 @@ class Genre(models.Model):
     def __str__(self):
         return self.genre
     
+
+
+
+    
 class Viewer(models.Model):
-    # VID = models.CharField(max_length = 255, primary_key=True,auto_created=True)
     email = models.EmailField(unique = True)
     # Validators for the viewer's password
     password = models.CharField(max_length=255 , validators=[MinLengthValidator(8),MaxLengthValidator(20)])
     def __str__(self):
         return self.email
 
+
+
 class Review(models.Model):
-    # RID = models.CharField(max_length = 255, primary_key=True,auto_created=True)
     Viewer = models.ForeignKey(Viewer, on_delete=models.PROTECT)
     #  blank is for the admin interface validation that the description is optional (form validation)
     description = models.TextField(blank=True)
@@ -81,8 +84,10 @@ class Review(models.Model):
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
     
 
+
+    
+
 class List(models.Model):
-    # LID =  models.CharField(max_length = 255, primary_key=True,auto_created=True)
     name = models.CharField(max_length = 255)
      #  blank is for the admin interface validation that the description is optional (form validation)
     description = models.TextField(blank=True)
