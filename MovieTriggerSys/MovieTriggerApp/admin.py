@@ -1,3 +1,4 @@
+
 from django.contrib import admin
 from . import models
 from django.utils.html import format_html 
@@ -64,7 +65,7 @@ class MovieAdmin(admin.ModelAdmin):
     actions = ['clear_rating']
         # display fields 
     # fields = ['trigger']
-    list_display=['MID','title','description','age_rating','TopMovies','trigger_name','age_rating_status','review','genre']
+    list_display=['id','title','description','age_rating','TopMovies','trigger_name','age_rating_status','review','genre',]
     list_editable=['age_rating']
     list_per_page=20
 
@@ -106,6 +107,7 @@ class MovieAdmin(admin.ModelAdmin):
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(TopMovies=Value(True))
     
+    
     # testing importing the review in movies
     def review(self,review:models.Review):
         return review.description
@@ -135,7 +137,7 @@ class ViewerAdmin(admin.ModelAdmin):
     # FORM FIELDS
     fields=[("email","password")]
     # display fields 
-    list_display=['VID','email','password']
+    list_display=['id','email','password']
     list_per_page=10
     list_filter=['email']
 
@@ -149,7 +151,7 @@ class ListAdmin(admin.ModelAdmin):
     # form fields
     fields=[("name","description"),('movie','viewer')]
     # display fields 
-    list_display=['LID','name','description']
+    list_display=['id','name','description']
     list_per_page=10
     list_filter=['name']
 
@@ -199,7 +201,7 @@ class ReviewAdmin(admin.ModelAdmin):
     # form fields
     fields=[("description"),('rating','movie','Viewer')]
     # display fields 
-    list_display=['RID','description','rating','Viewer','movie']
+    list_display=['id','description','rating','Viewer','movie']
     list_per_page=10
     list_filter=['rating']
 

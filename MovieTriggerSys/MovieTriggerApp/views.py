@@ -42,9 +42,9 @@ class ReviewViewSet(ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    search_fields = ['RID']
-    filterset_fields = ['RID']
-    ordering_fields = ['RID']
+    search_fields = ['id']
+    filterset_fields = ['id']
+    ordering_fields = ['id']
     pagination_class = DefaultPagination
 
     def get_queryset(self):
@@ -111,9 +111,9 @@ class ViewerViewSet(ModelViewSet):
     queryset = Viewer.objects.all()
     serializer_class = ViewerSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    search_fields = ['VID', 'email']
+    search_fields = ['id', 'email']
     filterset_fields = ['email']
-    ordering_fields = ['VID']
+    ordering_fields = ['id']
     pagination_class = DefaultPagination
 
     def destroy(self, request, *args, **kwargs):
