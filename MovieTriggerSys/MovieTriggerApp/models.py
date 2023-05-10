@@ -5,10 +5,14 @@ from uuid import uuid4
 import uuid
 
 # Create your models here.
-
+class Trigger(models.Model):
+    name = models.CharField(max_length = 255,unique=True)
+    #  blank is for the admin interface validation that the description is optional (form validation)
+    description = models.TextField(blank=True,null=True)
+    def __str__(self):
+        return self.name
 
 class Movie(models.Model):
-
     RATED_G = 'G'
     RATED_PG = 'PG'
     RATED_PG13 = 'PG13'
@@ -23,21 +27,13 @@ class Movie(models.Model):
 
     title = models.CharField(max_length = 255)
     #  blank is for the admin interface validation that the description is optional (form validation)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True,null=True)
     age_rating = models.CharField(max_length  = 4, choices = AGE_RATINGS, default = RATED_G)
     genre = models.ForeignKey('Genre', on_delete=models.PROTECT)
     # a trigger is optional in a movie (form validation)
-    trigger = models.ForeignKey('Trigger', on_delete=models.PROTECT,blank=True)
+    trigger = models.ManyToManyField(Trigger)
     def __str__(self):
         return self.title
-
-
-class Trigger(models.Model):
-    name = models.CharField(max_length = 255)
-    #  blank is for the admin interface validation that the description is optional (form validation)
-    description = models.TextField(blank=True)
-    def __str__(self):
-        return self.name
 
 class Genre(models.Model):
     ACTION = 'A'
@@ -61,10 +57,6 @@ class Genre(models.Model):
     def __str__(self):
         return self.genre
     
-
-
-
-    
 class Viewer(models.Model):
     email = models.EmailField(unique = True)
     # Validators for the viewer's password
@@ -75,13 +67,15 @@ class Viewer(models.Model):
 
 
 class Review(models.Model):
-    Viewer = models.ForeignKey(Viewer, on_delete=models.PROTECT)
+    Viewer = models.ForeignKey(Viewer, on_delete=models.CASCADE)
     #  blank is for the admin interface validation that the description is optional (form validation)
-    description = models.TextField(blank=True)
+    description = models.TextField(blank=True,null=True)
     # form validations for the ratings
     rating = models.IntegerField(validators = [MinValueValidator(1),MaxValueValidator(5)])
     #  to map the movie to thr movie model
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
+    class Meta:
+        unique_together = ['Viewer','movie']
     
 
 
@@ -89,7 +83,23 @@ class Review(models.Model):
 
 class List(models.Model):
     name = models.CharField(max_length = 255)
-     #  blank is for the admin interface validation that the description is optional (form validation)
-    description = models.TextField(blank=True)
-    movie = models.ForeignKey('Movie', on_delete=models.PROTECT)
-    viewer = models.ForeignKey('Viewer', on_delete=models.PROTECT)
+    #  blank is for the admin interface validation that the description is optional (form validation)
+    WATCHLIST = 'WL'
+    WATCHED = 'W'
+    FAVORITES= 'F'
+    BLOCKED = 'B'
+    LIST_TYPES = [
+        (WATCHLIST, 'Watch List'),
+        (WATCHED, 'Watched'),
+        (FAVORITES, 'Favorites'),
+        (BLOCKED, 'Blocked'),
+    ]
+    type = models.CharField(max_length = 255, choices = LIST_TYPES, default = WATCHLIST)
+    description = models.TextField(blank=True , null=True)
+    movie = models.ManyToManyField(Movie,related_name='movie')
+    viewer = models.ForeignKey('Viewer', on_delete=models.CASCADE)
+
+
+# class Movie_list(models.Model):
+#     movie =models.ForeignKey(Movie,on_delete=models.CASCADE)
+#     list =models.ForeignKey(List,on_delete=models.CASCADE)

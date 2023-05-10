@@ -1,6 +1,8 @@
 from django.shortcuts import render,get_object_or_404
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
+
+from .forms import CreateMovieForm
 from .models import *
 from .serializers import * 
 from rest_framework import status 
@@ -10,7 +12,7 @@ from rest_framework.views import APIView
 from rest_framework.mixins import ListModelMixin,CreateModelMixin,RetrieveModelMixin,DestroyModelMixin
 from rest_framework.generics import ListCreateAPIView , RetrieveUpdateDestroyAPIView
 from django_filters.rest_framework import DjangoFilterBackend
-from .filters import MovieFilter
+from .filters import ReviewFilter
 from rest_framework.filters import SearchFilter, OrderingFilter
 from .pagination import DefaultPagination
 
@@ -24,42 +26,63 @@ def ViewPage(request):
     return render(request,'MovieTriggerApp/index.html',{'name':'This is our Movie list','queryset':queryset})
 
 class MovieViewSet(ModelViewSet):
-    queryset = Movie.objects.all()
+    queryset = Movie.objects.all().select_related('genre')
+    # queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    filterset_class = MovieFilter
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    search_fields = ['title', 'genre']
+    # search_fields = ['title', 'genre__genre']
+    search_fields = ['title']
+    filterset_fields= ['genre']
     ordering_fields = ['age_rating']
     pagination_class = DefaultPagination
 
     @action(detail=False, methods = ['POST', 'GET'])
     def AddMovie(self, movies):
         return Response('Movie has been added')
+    
+    # destry method 
     def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs)
+        return super().destroy(request, *args, **kwargs) 
+
+    def get_serializer_class(self):
+        if self.request.method=='POST':
+            return CreateMovie
+        if self.request.method=='PATCH':
+            return UpdateMovie
+        return MovieSerializer
+
     
 class ReviewViewSet(ModelViewSet):
-    queryset = Review.objects.all()
+    queryset = Review.objects.all().select_related('movie')
     serializer_class = ReviewSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     search_fields = ['id']
-    filterset_fields = ['id']
+    # filterset_fields = ['id']
+    filterset_class= ReviewFilter
     ordering_fields = ['id']
     pagination_class = DefaultPagination
 
     def get_queryset(self):
         return Review.objects.filter(movie_id=self.kwargs['movie_pk'])
-
+    
     def get_serializer_context(self):
-
         return {'movie_id':self.kwargs['movie_pk']}
-
+    
     def destroy(self, request, *args, **kwargs):
         if Movie.objects.filter(review=kwargs['pk']).count() > 0:
-            return Response({'error':'This product is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response({'error':'This review is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         if Viewer.objects.filter(review=kwargs['pk']).count() > 0:
-            return Response({'error':'This product is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+            return Response({'error':'This review is associated with a viewer'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
+    
+    def get_serializer_class(self):
+        if self.request.method=='POST':
+            return CreateReview
+        if self.request.method=='PATCH':
+            return UpdateReview
+        return ReviewSerializer
+    
+
     
 
 class TriggerViewSet(ModelViewSet):
@@ -71,16 +94,16 @@ class TriggerViewSet(ModelViewSet):
     ordering_fields = ['name']
     # custom pagination
     pagination_class = DefaultPagination
-
     def destroy(self, request, *args, **kwargs):
-        if Movie.objects.filter(review=kwargs['pk']).count() > 0:
-            return Response({'error':'This product is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if Movie.objects.filter(trigger=kwargs['pk']).count() > 0:
+            return Response({'error':'This trigger is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
     
 
 class GenreViewSet(ModelViewSet):
     # here it uses the normal pagination
     queryset = Genre.objects.all()
+    http_method_names=['get','delete']
     serializer_class = GenreSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     search_fields = ['genre']
@@ -88,22 +111,22 @@ class GenreViewSet(ModelViewSet):
     ordering_fields = ['genre']
 
     def destroy(self, request, *args, **kwargs):
-        if Movie.objects.filter(review=kwargs['pk']).count() > 0:
-            return Response({'error':'This product is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if Movie.objects.filter(genre=kwargs['pk']).count() > 0:
+            return Response({'error':'This genre is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
     
 
 class ListViewSet(ModelViewSet):
-    queryset = List.objects.all()
+    queryset = List.objects.all().select_related('viewer')
     serializer_class = ListSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     search_fields = ['name', 'description']
     filterset_fields = ['name']
     ordering_fields = ['name']
-
+    form_class = CreateMovieForm
     def destroy(self, request, *args, **kwargs):
-        if Movie.objects.filter(review=kwargs['pk']).count() > 0:
-            return Response({'error':'This product is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if Movie.objects.filter(list=kwargs['pk']).count() > 0:
+            return Response({'error':'This list is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
     
 
@@ -117,10 +140,10 @@ class ViewerViewSet(ModelViewSet):
     pagination_class = DefaultPagination
 
     def destroy(self, request, *args, **kwargs):
-        if List.objects.filter(review=kwargs['pk']).count() > 0:
-            return Response({'error':'This product is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
-        if Review.objects.filter(review=kwargs['pk']).count() > 0:
-            return Response({'error':'This product is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if List.objects.filter(viewer=kwargs['pk']).count() > 0:
+            return Response({'error':'This viewer is associated with a list item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        if Review.objects.filter(Viewer=kwargs['pk']).count() > 0:
+            return Response({'error':'This viewer is associated with a review item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
     
 

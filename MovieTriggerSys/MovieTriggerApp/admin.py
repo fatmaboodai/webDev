@@ -16,18 +16,18 @@ from django.shortcuts import redirect
 
 #  we can create a movie while creating a trigger 
 #  add a children inline 
-class TriggerAdminInline(admin.StackedInline):
-    # overriding thew model i want to make it inline
-    model = models.Movie
-    extra = 0
+# class TriggerAdminInline(admin.StackedInline):
+#     # overriding thew model i want to make it inline
+#     model = models.Movie
+#     extra = 0
 
 
 # we can create a movie while creating a list
 # add a children inline 
-class MovieAdminInline(admin.StackedInline):
-    # overriding thew model i want to make it inline
-    model = models.List
-    extra = 0
+# class MovieAdminInline(admin.StackedInline):
+#     # overriding thew model i want to make it inline
+#     model = models.List
+#     extra = 0
 
 
 
@@ -76,14 +76,14 @@ class MovieAdmin(admin.ModelAdmin):
     # custom filter ?
     # list_filter=['age_rating', RatingFilter]
     list_filter=[ RatingFilter]
-    list_select_related=['trigger']
+    list_select_related=['genre']
     # ordering = ['Top5']
 
     list_filter=['age_rating']
 
 
     # refrence the inline 
-    inlines = [MovieAdminInline]
+    # inlines = [MovieAdminInline]
 
 
 #   COMPUTED COLUMN
@@ -149,7 +149,8 @@ class ViewerAdmin(admin.ModelAdmin):
 @admin.register(models.List)
 class ListAdmin(admin.ModelAdmin):
     # form fields
-    fields=[("name","description"),('movie','viewer')]
+    # fields=[("name","description"),('movie','viewer')]
+    fields=[("name","description"),('viewer')]
     # display fields 
     list_display=['id','name','description']
     list_per_page=10
@@ -173,7 +174,7 @@ class TriggerAdmin(admin.ModelAdmin):
 
     # this is the inline children code its not working
     # Refernce the inline class 
-    inlines = [TriggerAdminInline]
+    # inlines = [TriggerAdminInline]
 
 
 

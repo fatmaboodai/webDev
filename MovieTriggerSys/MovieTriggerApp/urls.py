@@ -8,7 +8,7 @@ from rest_framework_nested import routers
 # define routers
 router = routers.DefaultRouter()
 router.register('movies', views.MovieViewSet)
-router.register('reviews', views.ReviewViewSet,basename='movie-detail')
+# router.register('reviews', views.ReviewViewSet,basename='movie-detail')
 router.register('triggers', views.TriggerViewSet)
 router.register('lists', views.ListViewSet)
 router.register('viewers', views.ViewerViewSet)

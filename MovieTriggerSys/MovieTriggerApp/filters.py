@@ -1,10 +1,9 @@
 from django_filters.rest_framework import FilterSet
 from .models import *
 # custom filter
-class MovieFilter(FilterSet):
+class ReviewFilter(FilterSet):
     class Meta:
-        model = Movie
+        model = Review
         fields = {
-            'genre_id':['exact'],
-            'age_rating':['exact']
+            'rating':['gt','lt']
         }

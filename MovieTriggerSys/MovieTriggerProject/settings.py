@@ -85,7 +85,7 @@ DATABASES = {
         'NAME':'MovieTriggerApp',
         'HOST': 'localhost',
         'USER':'root',
-        # 'PASSWORD':''
+        'PASSWORD':'fatma2001'
     }
 }
 # Password validation
