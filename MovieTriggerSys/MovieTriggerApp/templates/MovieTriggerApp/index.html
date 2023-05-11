@@ -100,8 +100,11 @@
             <ul>
                 <ul>
                     {% for i in queryset%}
-                    <li>
-                        {{i.trigger}}
+    
+                        <li>
+                        {% for j in i.trigger.all%}
+                        {{j.name}}
+                        {% endfor %}
                         </li>
                         {% endfor %}
                 </ul>

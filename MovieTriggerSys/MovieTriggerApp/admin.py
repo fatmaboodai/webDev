@@ -1,4 +1,4 @@
-
+from ast import List
 from django.contrib import admin
 from . import models
 from django.utils.html import format_html 
@@ -6,6 +6,9 @@ from django.urls import reverse
 from django.db.models import Count,Value
 from django.utils.http import  urlencode
 from django.shortcuts import redirect
+from django.db.models import Q
+from django import forms
+from django.forms.widgets import CheckboxSelectMultiple
 
 # SUPERUSER INFO
 # Username : admin
@@ -16,18 +19,18 @@ from django.shortcuts import redirect
 
 #  we can create a movie while creating a trigger 
 #  add a children inline 
-# class TriggerAdminInline(admin.StackedInline):
-#     # overriding thew model i want to make it inline
-#     model = models.Movie
-#     extra = 0
+class TriggerAdminInline(admin.StackedInline):
+    # overriding thew model i want to make it inline
+    model = models.Movie
+    extra = 0
 
 
 # we can create a movie while creating a list
 # add a children inline 
-# class MovieAdminInline(admin.StackedInline):
-#     # overriding thew model i want to make it inline
-#     model = models.List
-#     extra = 0
+class MovieAdminInline(admin.StackedInline):
+    # overriding thew model i want to make it inline
+    model = models.List
+    extra = 0
 
 
 
@@ -52,10 +55,30 @@ class RatingFilter(admin.SimpleListFilter):
             return queryset.filter( age_rating = 'R')
         if self.value() == 'PG13':
             return queryset.filter( age_rating = 'PG13')
-    
+        
+
+
+class MovieForm(forms.ModelForm):
+    class Meta:
+        model = models.Movie
+        fields = ['title', 'description', 'age_rating', 'trigger', 'genre']
+        widgets = {
+            'trigger': forms.CheckboxSelectMultiple,
+        }
+
+
+class ListForm(forms.ModelForm):
+    class Meta:
+        model = models.List
+        fields= ["name","description",'type','movie','viewer']
+        widgets = {
+            'movie': forms.CheckboxSelectMultiple,
+        }
+
 # MOVIE MODEL
 @admin.register(models.Movie)
 class MovieAdmin(admin.ModelAdmin):
+    form = MovieForm
     # form fields
     fields=[("title","description"),('age_rating','trigger','genre')]
     # to make the genre and the trigger searcheable in the form
@@ -114,12 +137,27 @@ class MovieAdmin(admin.ModelAdmin):
     
     
 # RELATED CLOUMN
+# # TRIGGER NAME IN MOVIE LINKS TO OTHER PAGE
+#     @admin.display(ordering='trigger__name')
+#     def trigger_name(self,movie:models.Movie):
+#         x= ','.join([trigger.name for trigger in movie.trigger.all()])
+#         return format_html('<a href= "http://127.0.0.1:8000/admin/MovieTriggerApp/trigger/?name={}"> {} </a>', x, x)
+#         # return redirect('admin:MovieTriggerApp/admin/TriggerAdmin', movie.trigger.name)
+
+
+
 
 # TRIGGER NAME IN MOVIE LINKS TO OTHER PAGE
     @admin.display(ordering='trigger__name')
-    def trigger_name(self,movie:models.Movie):
-        return format_html('<a href= "http://127.0.0.1:8000/admin/MovieTriggerApp/trigger/?name={}"> {} </a>', movie.trigger.name, movie.trigger.name)
-        # return redirect('admin:MovieTriggerApp/admin/TriggerAdmin', movie.trigger.name)
+    def trigger_name(self, movie: models.Movie):
+        trigger_names = ','.join([trigger.name for trigger in movie.trigger.all()])
+        link = reverse('admin:MovieTriggerApp_trigger_changelist')
+        url = f'{link}?name={trigger_names}'
+        return format_html('<a href="{}">{}</a>', url, trigger_names)
+    
+
+
+
 
 # CREATE CUSTOM ACTION
     @admin.action(description='Clear Rating')
@@ -142,27 +180,25 @@ class ViewerAdmin(admin.ModelAdmin):
     list_filter=['email']
 
 
-
-
-
 # LIST MODEL
 @admin.register(models.List)
 class ListAdmin(admin.ModelAdmin):
+    form=ListForm
     # form fields
-    # fields=[("name","description"),('movie','viewer')]
-    fields=[("name","description"),('viewer')]
+    fields=[("name","description",'type'),('movie','viewer')]
+    # fields=[("name","description"),('viewer')]
     # display fields 
-    list_display=['id','name','description']
+    list_display=['id','name','description','movies','type']
     list_per_page=10
     list_filter=['name']
-
-    
-
+    def movies(self, obj):
+        return ', '.join([movie.title for movie in obj.movie.all()])
 
 
 # TRIGGER MODEL
 @admin.register(models.Trigger)
 class TriggerAdmin(admin.ModelAdmin):
+    
     # form fields
     fields=[("name","description")]
     # display fields 
@@ -170,15 +206,7 @@ class TriggerAdmin(admin.ModelAdmin):
     list_per_page=10
     list_filter=['name']
     # search field so it can be used in the autocomplete field
-    search_fields=['trigger']
-
-    # this is the inline children code its not working
-    # Refernce the inline class 
-    # inlines = [TriggerAdminInline]
-
-
-
-
+    search_fields=['name__icontains']
 # GENRE MODEL
 @admin.register(models.Genre)
 class GenreAdmin(admin.ModelAdmin):

@@ -1,8 +1,6 @@
 from django.shortcuts import render,get_object_or_404
 from rest_framework.decorators import api_view, action
 from rest_framework.response import Response
-
-from .forms import CreateMovieForm
 from .models import *
 from .serializers import * 
 from rest_framework import status 
@@ -21,33 +19,31 @@ from .pagination import DefaultPagination
 
 def ViewPage(request):
     # queryset = Movie.objects.all()
-    queryset = Movie.objects.select_related('trigger', 'genre').all()
+    queryset = Movie.objects.select_related('genre').all()
     list(queryset)
     return render(request,'MovieTriggerApp/index.html',{'name':'This is our Movie list','queryset':queryset})
 
 class MovieViewSet(ModelViewSet):
     queryset = Movie.objects.all().select_related('genre')
-    # queryset = Movie.objects.all()
     serializer_class = MovieSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    # search_fields = ['title', 'genre__genre']
     search_fields = ['title']
     filterset_fields= ['genre']
     ordering_fields = ['age_rating']
     pagination_class = DefaultPagination
 
-    @action(detail=False, methods = ['POST', 'GET'])
-    def AddMovie(self, movies):
-        return Response('Movie has been added')
-    
-    # destry method 
-    def destroy(self, request, *args, **kwargs):
-        return super().destroy(request, *args, **kwargs) 
+
+    @action(detail=False, methods=['POST'])
+    def AddMovie(self, request, *args, **kwargs):
+        serializer = UpdateMovie(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     def get_serializer_class(self):
         if self.request.method=='POST':
-            return CreateMovie
-        if self.request.method=='PATCH':
+            return UpdateMovie
+        if self.request.method=='PUT':
             return UpdateMovie
         return MovieSerializer
 
@@ -81,10 +77,7 @@ class ReviewViewSet(ModelViewSet):
         if self.request.method=='PATCH':
             return UpdateReview
         return ReviewSerializer
-    
-
-    
-
+ 
 class TriggerViewSet(ModelViewSet):
     queryset = Trigger.objects.all()
     serializer_class = TriggerSerializer
@@ -116,6 +109,7 @@ class GenreViewSet(ModelViewSet):
         return super().destroy(request, *args, **kwargs)
     
 
+
 class ListViewSet(ModelViewSet):
     queryset = List.objects.all().select_related('viewer')
     serializer_class = ListSerializer
@@ -123,13 +117,22 @@ class ListViewSet(ModelViewSet):
     search_fields = ['name', 'description']
     filterset_fields = ['name']
     ordering_fields = ['name']
-    form_class = CreateMovieForm
+
+
     def destroy(self, request, *args, **kwargs):
         if Movie.objects.filter(list=kwargs['pk']).count() > 0:
             return Response({'error':'This list is associated with a movie item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
     
 
+    def get_serializer_class(self):
+        if self.request.method=='POST':
+            return UpdateRList
+        if self.request.method=='PUT':
+            return UpdateRList
+        return ListSerializer
+        
+       
 class ViewerViewSet(ModelViewSet):
     queryset = Viewer.objects.all()
     serializer_class = ViewerSerializer

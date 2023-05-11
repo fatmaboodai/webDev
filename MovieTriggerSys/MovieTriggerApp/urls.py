@@ -7,8 +7,8 @@ from rest_framework_nested import routers
 
 # define routers
 router = routers.DefaultRouter()
-router.register('movies', views.MovieViewSet)
-# router.register('reviews', views.ReviewViewSet,basename='movie-detail')
+router.register('movies', views.MovieViewSet,basename='movie')
+# router.register('reviews', views.ReviewViewSet)
 router.register('triggers', views.TriggerViewSet)
 router.register('lists', views.ListViewSet)
 router.register('viewers', views.ViewerViewSet)
@@ -25,7 +25,13 @@ movie_viewer = routers.NestedDefaultRouter(router,'viewers',lookup='viewer')
 movie_viewer.register('reviews',views.ReviewViewSet,basename='viewer-review')
 
 
-urlpatterns = router.urls+movie_router.urls+movie_viewer.urls +[path('hello/',views.ViewPage)]
+viewer_router = routers.NestedDefaultRouter(router, 'viewers', lookup='viewer')
+viewer_router.register('lists', views.ListViewSet)
+
+
+
+
+urlpatterns = router.urls+movie_router.urls+movie_viewer.urls +[path('hello/',views.ViewPage)] +viewer_router.urls
 
 
 

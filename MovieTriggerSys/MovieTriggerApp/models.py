@@ -31,9 +31,12 @@ class Movie(models.Model):
     age_rating = models.CharField(max_length  = 4, choices = AGE_RATINGS, default = RATED_G)
     genre = models.ForeignKey('Genre', on_delete=models.PROTECT)
     # a trigger is optional in a movie (form validation)
-    trigger = models.ManyToManyField(Trigger)
+    trigger = models.ManyToManyField(Trigger,related_name='triggers')
     def __str__(self):
         return self.title
+    class Meta:
+        unique_together = ['genre','title']
+    
 
 class Genre(models.Model):
     ACTION = 'A'
@@ -53,7 +56,7 @@ class Genre(models.Model):
         (MYSTERY, 'Mystery'),
         (ROMANCE, 'Romance')
     ]
-    genre = models.CharField(max_length = 255, choices = GENRE_CHOICES, default = DRAMA)
+    genre = models.CharField(max_length = 255, choices = GENRE_CHOICES, default = DRAMA,unique = True)
     def __str__(self):
         return self.genre
     
@@ -97,7 +100,9 @@ class List(models.Model):
     type = models.CharField(max_length = 255, choices = LIST_TYPES, default = WATCHLIST)
     description = models.TextField(blank=True , null=True)
     movie = models.ManyToManyField(Movie,related_name='movie')
-    viewer = models.ForeignKey('Viewer', on_delete=models.CASCADE)
+    viewer = models.ForeignKey(Viewer, on_delete=models.CASCADE)
+
+    
 
 
 # class Movie_list(models.Model):
