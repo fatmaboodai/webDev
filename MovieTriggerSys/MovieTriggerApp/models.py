@@ -3,12 +3,8 @@ from django.forms import ValidationError
 from django.core.validators import MinValueValidator,MaxValueValidator,MinLengthValidator,MaxLengthValidator
 from uuid import uuid4
 import uuid
-from django.contrib.auth.models import AbstractUser
+from django.conf import settings
 
-
-# # create the User model
-# class User(AbstractUser):
-#     pass
 
 # Create your models here.
 class Trigger(models.Model):
@@ -17,6 +13,12 @@ class Trigger(models.Model):
     description = models.TextField(blank=True,null=True)
     def __str__(self):
         return self.name
+    
+    class Meta:
+        permissions = [
+            ('edit_trigger', 'Can edit trigger')
+    
+        ]
 
 class Movie(models.Model):
     RATED_G = 'G'
@@ -67,11 +69,17 @@ class Genre(models.Model):
         return self.genre
     
 class Viewer(models.Model):
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     email = models.EmailField(unique = True)
     # Validators for the viewer's password
     password = models.CharField(max_length=255 , validators=[MinLengthValidator(8),MaxLengthValidator(20)])
     def __str__(self):
-        return self.email
+        return self.user.email
+    
+    class Meta:
+        permissions = [
+            ('view_users', 'Can view users')
+        ]
 
 
 

@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_filters',
     'rest_framework',
-    # 'djoser'
+    'djoser',
+    'account'
 ]
 
 MIDDLEWARE = [
@@ -142,14 +143,24 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS':['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE':1,
-    # 'DEFAULT_AUTHENTICATION_CLASSES': (
-    # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-    # )
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'rest_framework_simplejwt.authentication.JWTAuthentication'
+    ),
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
 
 }
 
-# SIMPLE_JWT = {
-#     'AUTH_HEADER_TYPES': ('JWT',),
-#     'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
-# }
+DJOSER = {
+    'SERIALIZERS': {
+        'user_create': 'account.serializers.UserCreateSerializer',
+        'current_user': 'account.serializers.UserSerializer',
+    }
+}
+
+SIMPLE_JWT = {
+    'AUTH_HEADER_TYPES': ('JWT',),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+}
+
+AUTH_USER_MODEL = 'account.User'

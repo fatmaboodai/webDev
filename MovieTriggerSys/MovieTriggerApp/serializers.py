@@ -88,9 +88,10 @@ class TriggerSerializer(serializers.ModelSerializer):
 
 # Viewer serlizer
 class ViewerSerializer(serializers.ModelSerializer):
+    user_id = serializers.IntegerField(read_only = True)
     class Meta:
         model = Viewer
-        fields = ['id','email','password']
+        fields = ['id','email','password', 'user_id']
 
 
 # List serlizer
