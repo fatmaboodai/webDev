@@ -3,6 +3,12 @@ from django.forms import ValidationError
 from django.core.validators import MinValueValidator,MaxValueValidator,MinLengthValidator,MaxLengthValidator
 from uuid import uuid4
 import uuid
+from django.contrib.auth.models import AbstractUser
+
+
+# # create the User model
+# class User(AbstractUser):
+#     pass
 
 # Create your models here.
 class Trigger(models.Model):

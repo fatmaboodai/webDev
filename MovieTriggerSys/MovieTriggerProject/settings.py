@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'debug_toolbar',
     'django_filters',
     'rest_framework',
+    # 'djoser'
 ]
 
 MIDDLEWARE = [
@@ -85,7 +87,7 @@ DATABASES = {
         'NAME':'MovieTriggerApp',
         'HOST': 'localhost',
         'USER':'root',
-        'PASSWORD':'fatma2001'
+        'PASSWORD':'JannaDB01.'
     }
 }
 # Password validation
@@ -139,5 +141,15 @@ REST_FRAMEWORK = {
     'COERCE_DECIMAL_TO_STRING':False,
     'DEFAULT_FILTER_BACKENDS':['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS':'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE':1
+    'PAGE_SIZE':1,
+    # 'DEFAULT_AUTHENTICATION_CLASSES': (
+    # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+    # )
+
 }
+
+# SIMPLE_JWT = {
+#     'AUTH_HEADER_TYPES': ('JWT',),
+#     'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
+#     'REFRESH_TOKEN_LIFETIME': timedelta(days=15),
+# }
