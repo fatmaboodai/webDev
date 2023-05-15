@@ -174,6 +174,8 @@ class MovieAdmin(admin.ModelAdmin):
 class ViewerAdmin(admin.ModelAdmin):
     # FORM FIELDS
     fields=[("email","password", "user")]
+    # fields=[("email","password", "user")]
+
     list_select_related = ["user"]
     search_fields = ["user__email__istartswith"]
     ordering = ["user__email"]
@@ -181,7 +183,9 @@ class ViewerAdmin(admin.ModelAdmin):
     # display fields 
     list_display=['id','email','password']
     list_per_page=10
-    list_filter=['email']
+    #list_filter=['email']
+    list_filter=['id']
+
 
     @admin.display(ordering="user__email")
     def email(self, viewer):

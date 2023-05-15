@@ -91,7 +91,8 @@ class ViewerSerializer(serializers.ModelSerializer):
     user_id = serializers.IntegerField(read_only = True)
     class Meta:
         model = Viewer
-        fields = ['id','email','password', 'user_id']
+        fields = ['id','password', 'user_id']
+        # fields = ['id','email','password', 'user_id']
 
 
 # List serlizer

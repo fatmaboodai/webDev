@@ -4,7 +4,7 @@ class IsAdminOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         if request.method in permissions.SAFE_METHODS:
             return True
-        return bool(request.user and request.user.in_staff)
+        return bool(request.user and request.user.is_staff)
     
 class CustomDjangoPermission(permissions.DjangoModelPermissions):
     def __init__(self) -> None:
@@ -12,4 +12,4 @@ class CustomDjangoPermission(permissions.DjangoModelPermissions):
 
 class ViewUsersPermission(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.has_perm('MovieTriggerApp.view_user')
+        return request.user.has_perm('MovieTriggerApp.view_users')

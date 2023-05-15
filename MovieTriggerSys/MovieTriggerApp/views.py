@@ -29,12 +29,21 @@ class MovieViewSet(ModelViewSet):
     queryset = Movie.objects.all().select_related('genre')
     serializer_class = MovieSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    permission_classes = [IsAdminOrReadOnly]
+    # permission_classes = [IsAdminOrReadOnly]
     search_fields = ['title']
     filterset_fields= ['genre']
     ordering_fields = ['age_rating']
     pagination_class = DefaultPagination
 
+    # def get_permissions(self):
+    #     if self.request.method == 'GET':
+    #         return [AllowAny()]
+    #     return [IsAuthenticated()]
+
+    def get_permissions(self):
+        if self.request.method in ['PATCH', 'DELETE']:
+            return [IsAdminUser()]
+        return [IsAuthenticated()]
 
     @action(detail=False, methods=['POST'])
     def AddMovie(self, request, *args, **kwargs):
@@ -141,17 +150,17 @@ class ListViewSet(ModelViewSet):
 class ViewerViewSet(ModelViewSet):
     queryset = Viewer.objects.all()
     serializer_class = ViewerSerializer
-    permission_classes = [IsAdminUser, CustomDjangoPermission]
+    permission_classes = [CustomDjangoPermission]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    search_fields = ['id', 'email']
-    filterset_fields = ['email']
+    search_fields = ['id']
+    filterset_fields = ['id']
     ordering_fields = ['id']
     pagination_class = DefaultPagination
 
-    def get_permissions(self):
-        if self.request.method == 'GET':
-            return [AllowAny()]
-        return [IsAuthenticated()]
+    # def get_permissions(self):
+    #     if self.request.method == 'GET':
+    #         return [AllowAny()]
+    #     return [IsAuthenticated()]
 
     def destroy(self, request, *args, **kwargs):
         if List.objects.filter(viewer=kwargs['pk']).count() > 0:
@@ -160,9 +169,13 @@ class ViewerViewSet(ModelViewSet):
             return Response({'error':'This viewer is associated with a review item'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
         return super().destroy(request, *args, **kwargs)
     
+    @action(detail = True, permission_classes = [ViewUsersPermission])
+    def users(self, request, pk):
+        return Response('ok')
+    
     @action(detail = False, methods = ['GET', 'PUT'], permission_classes = [IsAuthenticated])
     def me(self, request):
-        (viewer, created) = Viewer.objects.get_or_create(user_id = request.user.id)
+        viewer = Viewer.objects.get(user_id = request.user.id)
         if request.method == 'GET':
             serializer = ViewerSerializer(viewer)
             return Response(serializer.data)
@@ -172,9 +185,6 @@ class ViewerViewSet(ModelViewSet):
             serializer.save()
             return Response(serializer.data)
         
-    @action(detail = True, permission_classes = [ViewUsersPermission])
-    def users(self, request, pk):
-        return Response('ok')
     
 
 # ________________________________________________________________________________________________________________

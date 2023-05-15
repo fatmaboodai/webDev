@@ -2,6 +2,9 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from . import models
 
+
+# Register your models here.
+
 @admin.register(models.User)
 class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
@@ -9,11 +12,10 @@ class UserAdmin(BaseUserAdmin):
         None, 
         {
             "classes": ("wide",),
-            "fields": ("email", "password1", "password2"),
-        }
-        )
+            "fields": ("username", "email", "password1", "password2"),
+        },
+        ),
     )
 
-# Register your models here.
-
+    
 

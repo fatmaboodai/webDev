@@ -70,7 +70,7 @@ class Genre(models.Model):
     
 class Viewer(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    email = models.EmailField(unique = True)
+    # email = models.EmailField(unique = True)
     # Validators for the viewer's password
     password = models.CharField(max_length=255 , validators=[MinLengthValidator(8),MaxLengthValidator(20)])
     def __str__(self):
